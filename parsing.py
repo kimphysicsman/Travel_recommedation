@@ -1,4 +1,7 @@
-import json
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbtripin
+
 import requests
 
 base_parsing_url = 'https://map.naver.com/v5/api/search?caller=pcweb&query='
@@ -16,13 +19,37 @@ def parsing(word):
     y = place['y']
     address = place['address']
 
-    return [x, y, id, name]
+    # db에 입력 단어 검색한 후 없으면 저장
+    if db.places.find_one({'word': word}) is None:
+        place_info = {
+            'id': id,
+            'name': name,
+            'x': x,
+            'y': y,
+            'address': address,
+            'word': word
+        }
+        db.places.insert_one(place_info)
+        print(name, 'is insert.')
+
+    return [x, y, id, name, address]
 
 
 # start에서 goal까지 걸리는 이동 시간
 def route(start_word, goal_word):
-    start = parsing(start_word)
-    goal = parsing(goal_word)
+
+    # db에서 입력 단어 검색한 후 없으면 parsing하고 있으면 가져옴
+    start_info = db.places.find_one({'word': start_word})
+    if start_info is None:
+        start = parsing(start_word)
+    else:
+        start = [start_info['x'], start_info['y'], start_info['id'], start_info['name']]
+
+    goal_info = db.places.find_one({'word': goal_word})
+    if goal_info is None:
+        goal = parsing(goal_word)
+    else:
+        goal = [goal_info['x'], goal_info['y'], goal_info['id'], goal_info['name']]
 
     route_url = base_route_url.format(start[0], start[1], start[2], start[3],
                                       goal[0], goal[1], goal[2], goal[3])
