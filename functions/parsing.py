@@ -13,11 +13,11 @@ headers = {
 
 
 # start에서 goal까지 걸리는 이동 시간
-def duration_minute(start_index, start_word, goal_index, goal_word):
-    start = parsing(start_index, start_word)
-    goal = parsing(goal_index, goal_word)
+def duration_minute(start_index, start_word, goal_index, goal_word, places_info):
+    start = parsing(start_index, start_word, places_info)
+    goal = parsing(goal_index, goal_word, places_info)
 
-    duration = db.durations.find_one({'start_id': start['id'], 'goal_id': goal['id']})
+    duration = db.durations.find_one({'start_id': start['id'], 'goal_id': goal['id']}, {'_id':False})
     if duration is None:
         route_url = base_route_url.format(start['x'], start['y'], start['id'], start['name'],
                                           goal['x'], goal['y'], goal['id'], goal['name'])
@@ -48,13 +48,13 @@ def duration_minute(start_index, start_word, goal_index, goal_word):
 
 # 네이버지도에서 'word kinds[index]'으로 검색하여 첫번째 맛집의 정보 크롤링
 # index - 0: 여행장소, 1: 맛집, 2: 카페, 3: 숙소
-def parsing(index, word):
+def parsing(index, word, places_info):
     kinds = ['', '맛집', '카페', '숙소']
 
     # db에 입력 단어 검색한 후 없으면 저장
     if index != 0:
         # 여행장소가 아닐때 -> others에 저장
-        place = db.others.find_one({'word': word, 'index': index})
+        place = db.others.find_one({'word': word, 'index': index}, {'_id':False})
         if place is None:
             parsing_url = base_parsing_url + word + ' ' + kinds[index]
             data = requests.get(parsing_url, headers=headers).json()
@@ -76,7 +76,7 @@ def parsing(index, word):
             # print(place_info['name'], 'find.')
     else:
         # 여행장소일때 -> places에 저장
-        place = db.places.find_one({'word': word})
+        place = db.places.find_one({'word': word}, {'_id':False})
         if place is None:
             parsing_url = base_parsing_url + word
             data = requests.get(parsing_url, headers=headers).json()
@@ -96,6 +96,9 @@ def parsing(index, word):
         else:
             place_info = place
             # print(place_info['name'], 'find.')
+
+    if place_info not in places_info:
+        places_info.append(place_info)
 
     return place_info
 
