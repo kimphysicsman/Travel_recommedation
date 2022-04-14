@@ -1,5 +1,5 @@
-import parsing
-import tsp
+from functions import parsing
+from functions import tsp
 
 
 # places : 출발지 + 여행 장소들을 원소로 하는 리스트 / places[0] : 출발지
@@ -26,9 +26,10 @@ def dists_and_route(places):
     return dists, route
 
 
-# route : 최적경로
-# indexs : 경로에 맛집, 카페, 숙소 추가 유무
-def recommend(route, indexs):
+# route : 여행 최적경로
+# indexs : 경로에 맛집, 카페, 숙소 추가 유무 리스트 - 0: 추가 안함, 1:추가함 ex) [0, 1, 1]
+def recommend(dists, route, indexs):
+    time = 600
     update_route = route
 
     return update_route

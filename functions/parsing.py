@@ -1,9 +1,8 @@
 from pymongo import MongoClient
+import requests
 
 client = MongoClient('localhost', 27017)
 db = client.dbtripin
-
-import requests
 
 base_parsing_url = 'https://map.naver.com/v5/api/search?caller=pcweb&query='
 base_route_url = 'https://map.naver.com/v5/api/transit/directions/point-to-point?start={}, {},placeid= {},name= {}&goal= {}, {},placeid= {},name={}'
