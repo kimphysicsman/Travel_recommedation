@@ -5,6 +5,6 @@ dists = [[0, 37, 31, 26],
          [30, 45, 0, 1],
          [20, 41, 1, 0]]
 
-result = tsp.tsp(dists)
+dists *= 2
 
-print(result[1])
+print(dists)

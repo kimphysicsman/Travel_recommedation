@@ -99,6 +99,3 @@ def parsing(index, word):
 
     return place_info
 
-# parsing_more('경복궁', 1)
-# parsing_more('경복궁', 2)
-# parsing_more('경복궁', 3)
