@@ -10,7 +10,9 @@ import requests
 url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode'
 
 params = {
-    'query': '경복궁',
+    # 'query': '경복궁',
+     'query': '서울 종로구 세종로 1-91',
+
 }
 
 headers = {

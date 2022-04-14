@@ -1,8 +1,10 @@
-import datetime
-from datetime import timedelta as t
+from functions import tsp
 
-a = datetime.datetime(2021, 12, 25)
+dists = [[0, 37, 31, 26],
+         [33, 0, 38, 31],
+         [30, 45, 0, 1],
+         [20, 41, 1, 0]]
 
-b = a + t(minutes=20)
+result = tsp.tsp(dists)
 
-print(a, b)
+print(result[1])

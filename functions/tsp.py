@@ -47,7 +47,7 @@ def tsp(dists):
 
     distance = path(0, 1 << 0)
     total_distance = distance
-    print('distance :', distance)
+    # print('distance :', distance)
 
     # 경로 추적
     current_place = 0
@@ -55,7 +55,7 @@ def tsp(dists):
     path_order = [0]
     for i in range(N):
         for j in range(N):
-            if 1 & (1 << j):  # 현재 방문한 곳이 이미 방문한 곳이면 넘어가기
+            if visited_place & (1 << j):  # 현재 방문한 곳이 이미 방문한 곳이면 넘어가기
                 continue
             if distance - dists[current_place][j] == cache[j][visited_place + (1 << j)]:
                 path_order.append(j)
@@ -70,6 +70,6 @@ def tsp(dists):
         k += 1
     path_order.append(k)
     path_order.append(0)
-    print(path_order)
+    # print(path_order)
 
     return [total_distance, path_order]
