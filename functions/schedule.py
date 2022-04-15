@@ -5,6 +5,15 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbtripin
 
+PLACE_TIME_INDEX_0 = t(hours=2)
+PLACE_TIME_INDEX_1 = t(hours=1)
+PLACE_TIME_INDEX_2 = t(hours=1)
+
+CONST_LUNCH_TIME = t(hours=12)
+CONST_DINNER_TIME = t(hours=18)
+CONST_CAFFE_TIME = t(hours=15)
+CONST_HOTEL_TIME = t(hours=21)
+
 def schedule(places, places_info, start_day, start_time, dists, route, add_place_index):
     # 현재 장소
     current_index = 0
@@ -25,10 +34,10 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
     lunch_bool, dinner_bool, caffe_bool, hotel_bool = add_place_index
 
     # 장소 추가 시점 변수
-    lunch_time = current_day + t(hours=12)
-    dinner_time = current_day + t(hours=18)
-    caffe_time = current_day + t(hours=15)
-    hotel_time = current_day + t(hours=21)
+    lunch_time = current_day + CONST_LUNCH_TIME
+    dinner_time = current_day + CONST_DINNER_TIME
+    caffe_time = current_day + CONST_CAFFE_TIME
+    hotel_time = current_day + CONST_HOTEL_TIME
 
     # 실재 여행 경로
     real_route = [0]
@@ -87,7 +96,7 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 next_point = route[next_index]
 
                 # 관광 시간 업데이트
-                current_time += t(hours=3)
+                current_time += PLACE_TIME_INDEX_0
                 print(current_time, ':', places[current_point], '관광')
 
             current_index += 1
@@ -130,7 +139,7 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
 
             # 소요 시간 업데이트
             if index == 1:
-                current_time += t(hours=1)
+                current_time += PLACE_TIME_INDEX_1
                 print(current_time, ': 식사 시간')
 
                 if lunch_bool:
@@ -139,24 +148,26 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                     if dinner_bool:
                         dinner_bool = 0
             elif index == 2:
-                current_time += t(hours=1)
+                current_time += PLACE_TIME_INDEX_2
                 print(current_time, ': 카페 시간')
                 caffe_bool = 0
             elif index == 3:
                 current_day += t(days=1)
                 current_time = current_day + t(hours=10)
-                lunch_time = current_day + t(hours=12)
-                dinner_time = current_day + t(hours=18)
-                caffe_time = current_day + t(hours=15)
-                hotel_time = current_day + t(hours=21)
+                lunch_time = current_day + CONST_LUNCH_TIME
+                dinner_time = current_day + CONST_DINNER_TIME
+                caffe_time = current_day + CONST_CAFFE_TIME
+                hotel_time = current_day + CONST_HOTEL_TIME
                 lunch_bool, dinner_bool, caffe_bool, hotel_bool = add_place_index
                 print(current_time, ': 숙소 시간')
-
 
     real_places = []
     for i in real_route:
         real_places.append(places[i])
     print('변경된 여행 경로 :', real_places)
+
+
+
 
 # t_places = ['서울역', '남산타워', '경복궁', '광화문']
 # t_places_info = [
