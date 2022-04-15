@@ -6,13 +6,13 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbtripin
 
+# input data
 places = ['서울역', '남산타워', '경복궁', '광화문']
 places_info = [
     {'id': '11630456', 'name': '서울역 경부선(고속철도)', 'x': '126.9706649', 'y': '37.5550333', 'address': '서울특별시 중구 봉래동2가 122-21 서울역', 'word': '서울역', 'index': 0},
     {'id': '38345004', 'name': '남산서울타워', 'x': '126.9882487', 'y': '37.5512164', 'address': '서울특별시 용산구 용산동2가 산1-3', 'word': '남산타워', 'index': 0},
     {'id': '11571707', 'name': '경복궁', 'x': '126.9770162', 'y': '37.5788407', 'address': '서울특별시 종로구 세종로 1-91', 'word': '경복궁', 'index': 0},
     {'id': '13161322', 'name': '광화문', 'x': '126.9768428', 'y': '37.5760260', 'address': '서울특별시 종로구 세종로 1-57', 'word': '광화문', 'index': 0}]
-
 start_day = datetime(2022, 4, 14, 0, 0, 0)
 time = start_day + t(hours=10)
 dists = [[0, 53, 75, 66],
@@ -20,6 +20,9 @@ dists = [[0, 53, 75, 66],
          [80, 65, 0, 40],
          [60, 71, 43, 0]]
 route = [0, 1, 2, 3, 0]
+add_place_index = [1, 1, 1, 1]
+
+
 
 # 현재 장소
 current_index = 0
@@ -37,7 +40,6 @@ next_index = current_index + 1
 next_point = route[next_index]
 
 # 장소 추가 유무 변수 - 0: 추가안해도됨, 1:추가해야됨
-add_place_index = [1, 1, 1, 1]
 lunch_bool, dinner_bool, caffe_bool, hotel_bool = add_place_index
 
 # 장소 추가 시점 변수
@@ -166,12 +168,13 @@ while 1:
             dinner_time = current_day + t(hours=18)
             caffe_time = current_day + t(hours=15)
             hotel_time = current_day + t(hours=21)
-            c = add_place_index
+            lunch_bool, dinner_bool, caffe_bool, hotel_bool = add_place_index
             print(current_time, ': 숙소 시간')
 
-
-
-print(places)
-# print(places_info)
 print(real_route)
+print(places)
+real_places = []
 
+for i in real_route:
+    real_places.append(places[i])
+print(real_places)
