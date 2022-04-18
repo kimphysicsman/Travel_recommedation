@@ -3,6 +3,8 @@
 Travel recommendation algorithm
 using naver map api
 
+### kimphysicsman.shop
+
 ### 기본정보
 이동시간, 장소좌표 : 네이버지도 api
 출발시간 : 기본 am 10:00

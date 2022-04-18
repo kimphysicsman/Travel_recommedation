@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+
+    <meta property="og:title" content="모모코 무드등 쇼핑몰" />
+    <meta property="og:description" content="모코코 무드등 팝니다." />
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.jpg') }}" />
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Dongle', sans-serif;
+        }
+
+        .body_box {
+            width: 300px;
+            margin: auto;
+        }
+
+        .table_box{
+            font-family: 'Dongle', sans-serif;
+            width: 500px;
+            margin: auto;
+        }
+
+        .product_img {
+            width: 300px;
+            height: 300px;
+
+            background-image: url("https://media.bunjang.co.kr/product/183489786_1_1648527887_w360.jpg");
+            background-size: cover;
+            background-position: center;
+
+            border-radius: 20px;
+            margin: 30px auto 30px auto;
+        }
+
+        .product_price {
+            font-size: 20px;
+        }
+
+        .order_btn {
+            width: 100px;
+            display: block;
+            margin: auto auto 30px auto;
+        }
+
+        .blue_font {
+            color: blue;
+        }
+    </style>
+
+    <script>
+
+        function delete_all() {
+            localStorage.removeItem("places")
+            let temp_list = []
+            localStorage.setItem("places", JSON.stringify(temp_list))
+            window.location.reload()
+         }
+
+        $(document).ready(function () {
+            console.log(localStorage)
+            $('#order_table').show()
+            $('#route_table').hide()
+            place_listing()
+        });
+
+        function place_listing() {
+            $('#route_table').hide()
+            $('#order_table').show()
+            $('#order_list').empty()
+
+            let output = localStorage.getItem("places")
+            let place_list = JSON.parse(output)
+            for(let i = 0; i < place_list.length; i++){
+                let name = place_list[i]['name']
+                let address = place_list[i]['address']
+                let word = place_list[i]['word']
+                let temp_html = `<tr>
+                                    <th scope="row">${word}</th>
+                                    <td>${name}</td>
+                                    <td>${address}</td>
+                                </tr>`
+
+                $('#order_list').append(temp_html)
+            }
+
+        }
+
+
+        function recommend() {
+            $('#route_list').empty()
+            $('#route_table').show()
+            $('#order_table').hide()
+            let places = JSON.parse(localStorage.getItem("places"))
+            let place_info = {}
+            for(let i=0; i < places.length; i++){
+                place_info[i.toString()] = places[i]['word']
+            }
+            $.ajax({
+                type: "POST",
+                url: "/recommend",
+                data: place_info,
+                success: function (response) {
+                    let total_route = response['total_route']
+                    for(let i = 0; i < total_route.length; i++){
+                        let time = total_route[i]['time']
+                        let doing = total_route[i]['doing']
+                        let temp_html = `<tr>
+                                            <th scope="row">${time}</th>
+                                            <td>${doing}</td>
+                                        </tr>`
+
+                        $('#route_list').append(temp_html)
+                    }
+
+                }
+            })
+        }
+
+        function add() {
+            let place_word = $('#name_box').val()
+
+            if (JSON.parse(localStorage.getItem("places")) == null){
+                let temp_list = []
+                localStorage.setItem("places", JSON.stringify(temp_list))
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/add",
+                data: {
+                    word: place_word
+                },
+                success: function (response) {
+                    let place = {
+                        'name': response['place_info']['name'],
+                        'address': response['place_info']['address'],
+                        'word': place_word
+                    }
+                    let place_list = JSON.parse(localStorage.getItem("places"))
+
+                    place_list.push(place)
+                    localStorage.setItem("places", JSON.stringify(place_list))
+
+                    window.location.reload()
+                }
+            })
+        }
+
+    </script>
+
+</head>
+
+<body class="table_box">
+    <div class="body_box">
+        <div class="product_img"></div>
+        <h1>여행 경로 추천 받기 <span class="product_price">참조 : 네이버 지도</span></h1>
+
+        <div id="rate-box"></div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">장소 이름</span>
+            </div>
+            <input id="name_box" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+
+        <button type="button" onclick="add()" class="btn btn-primary order_btn">추가하기</button>
+    </div>
+    <table id="route_table" class="table">
+        <thead>
+        <tr>
+            <th scope="col">시간</th>
+            <th scope="col">내용</th>
+        </tr>
+        </thead>
+        <tbody id="route_list">
+        </tbody>
+
+        <button type="button" onclick="recommend()" class="btn btn-primary order_btn">추천받기</button>
+    </table>
+
+
+    <table id="order_table" class="table">
+        <thead>
+        <tr>
+            <th scope="col">검색 단어</th>
+            <th scope="col">장소 이름</th>
+            <th scope="col">주소</th>
+        </tr>
+        </thead>
+        <tbody id="order_list">
+        </tbody>
+    </table>
+
+    <button type="button" onclick="delete_all()" class="btn btn-primary order_btn">초기화</button>
+
+
+
+
+</body>
+
+</html>

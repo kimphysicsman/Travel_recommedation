@@ -18,6 +18,7 @@ def dists_and_route(places, places_info):
         print(i)
 
     result = tsp.tsp(dists)
+    print(result)
 
     route = []
     for i in result[1]:

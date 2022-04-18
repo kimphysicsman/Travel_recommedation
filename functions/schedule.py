@@ -15,6 +15,9 @@ CONST_CAFFE_TIME = t(hours=15)
 CONST_HOTEL_TIME = t(hours=21)
 
 def schedule(places, places_info, start_day, start_time, dists, route, add_place_index):
+    # 여행 경로 저장 변수
+    total_route = []
+
     # 현재 장소
     current_index = 0
     current_point = route[current_index]
@@ -70,6 +73,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 # 시간 업데이트
                 current_time += t(minutes=move_time)
                 print(current_time, ':', places[current_point], '->', places[next_point])
+                temp_place = {
+                    'time': current_time,
+                    'doing': places[current_point] + '->' + places[next_point]
+                }
+                total_route.append(temp_place)
 
             # 추가한 장소 -> 여행 장소
             else:
@@ -79,6 +87,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 # 시간 업데이트
                 current_time += t(minutes=duration)
                 print(current_time, ':', current_info['name'], '->', places[next_point])
+                temp_place = {
+                    'time': current_time,
+                    'doing': current_info['name'] + '->' + places[next_point]
+                }
+                total_route.append(temp_place)
 
             # 인덱스 수정
             current_index = next_index
@@ -98,6 +111,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 # 관광 시간 업데이트
                 current_time += PLACE_TIME_INDEX_0
                 print(current_time, ':', places[current_point], '관광')
+                temp_place = {
+                    'time': current_time,
+                    'doing': places[current_point] + '관광'
+                }
+                total_route.append(temp_place)
 
             current_index += 1
             if current_index == len(route):
@@ -116,6 +134,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 # 시간 업데이트
                 current_time += t(minutes=duration)
                 print(current_time, ':', places[current_point], '->', add_place['name'])
+                temp_place = {
+                    'time': current_time,
+                    'doing': places[current_point] + '->' + add_place['name']
+                }
+                total_route.append(temp_place)
 
             # 추가한 장소 -> 추가한 장소
             else:
@@ -130,6 +153,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 # 시간 업데이트
                 current_time += t(minutes=duration)
                 print(current_time, ':', current_info['name'], '->', add_place['name'])
+                temp_place = {
+                    'time': current_time,
+                    'doing': current_info['name'] + '->' + add_place['name']
+                }
+                total_route.append(temp_place)
 
             # 이동한 위치 저장
             add_point = len(places)
@@ -141,6 +169,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
             if index == 1:
                 current_time += PLACE_TIME_INDEX_1
                 print(current_time, ': 식사 시간')
+                temp_place = {
+                    'time': current_time,
+                    'doing': '식사 시간'
+                }
+                total_route.append(temp_place)
 
                 if lunch_bool:
                     lunch_bool = 0
@@ -150,6 +183,11 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
             elif index == 2:
                 current_time += PLACE_TIME_INDEX_2
                 print(current_time, ': 카페 시간')
+                temp_place = {
+                    'time': current_time,
+                    'doing': '카페 시간'
+                }
+                total_route.append(temp_place)
                 caffe_bool = 0
             elif index == 3:
                 current_day += t(days=1)
@@ -160,11 +198,18 @@ def schedule(places, places_info, start_day, start_time, dists, route, add_place
                 hotel_time = current_day + CONST_HOTEL_TIME
                 lunch_bool, dinner_bool, caffe_bool, hotel_bool = add_place_index
                 print(current_time, ': 숙소 시간')
+                temp_place = {
+                    'time': current_time,
+                    'doing': '숙소 시간'
+                }
+                total_route.append(temp_place)
 
     real_places = []
     for i in real_route:
         real_places.append(places[i])
     print('변경된 여행 경로 :', real_places)
+
+    return total_route
 
 
 

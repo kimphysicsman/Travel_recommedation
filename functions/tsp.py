@@ -64,7 +64,7 @@ def tsp(dists):
                 visited_place += (1 << j)
 
     k = 0
-    last_place = 15 ^ visited_place
+    last_place = (2**N - 1) ^ visited_place
     while last_place != 1:
         last_place = last_place >> 1
         k += 1
